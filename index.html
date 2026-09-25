@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111522">
+<meta name="description" content="Lisan Translate - offline-first translator">
+<title>Lisan Translate</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700&display=swap');
+:root{--bg:#eef1fa;--fg:#172033;--muted:#68738a;--glass:rgba(255,255,255,.68);--strong:rgba(255,255,255,.88);--line:rgba(255,255,255,.78);--accent:#6558e8;--danger:#b42335;--shadow:0 20px 55px rgba(40,48,90,.13);--r:26px}
+:root.dark{--bg:#101522;--fg:#f3f5fc;--muted:#adb5c9;--glass:rgba(28,35,54,.74);--strong:rgba(35,43,64,.94);--line:rgba(255,255,255,.12);--shadow:0 20px 55px rgba(0,0,0,.3)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--fg);font:16px/1.5 "Noto Sans Ethiopic",system-ui,sans-serif;background:radial-gradient(circle at 5% 0,#b9c8ff99,transparent 35rem),radial-gradient(circle at 100% 20%,#ffc5dd88,transparent 35rem),var(--bg);background-attachment:fixed}
+button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer}.app{width:min(1120px,100%);margin:auto;padding:22px 18px 110px}.glass{background:var(--glass);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:var(--r)}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(135deg,#6558e8,#ba73dd);color:#fff;font-weight:800}.brand h1{font-size:1.1rem;margin:0}.brand p{margin:2px 0;color:var(--muted);font-size:.82rem}.status{padding:8px 12px;border-radius:99px;background:var(--glass);border:1px solid var(--line);font-size:.82rem;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#38a978;margin-right:7px}.dot.off{background:#e6a23c}
+.grid{display:grid;gap:16px;position:relative}.card{padding:20px;min-width:0}.langrow{display:flex;gap:8px;align-items:center;margin-bottom:12px}.select{min-height:44px;padding:8px 12px;border:1px solid var(--line);background:var(--strong);border-radius:14px}.select select{border:0;background:transparent;outline:0;max-width:100%}.swap{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--strong);box-shadow:var(--shadow);font-size:22px}.swap:hover{transform:translate(-50%,-50%) rotate(180deg)}textarea,.output{width:100%;min-height:170px;padding:7px 2px;border:0;outline:0;background:transparent;font-size:1.12rem;resize:vertical;white-space:pre-wrap;overflow-wrap:anywhere}.output.empty{color:var(--muted)}.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.actions{display:flex;gap:7px;flex-wrap:wrap}.btn{min-height:44px;padding:9px 14px;border:1px solid var(--line);background:var(--strong);border-radius:14px}.btn.primary{color:#fff;border:0;background:linear-gradient(135deg,#6558e8,#8b79f7)}.icon{width:44px;padding:0}.btn:active{transform:scale(.97)}.btn:disabled{opacity:.5;cursor:not-allowed}.hint,.msg{color:var(--muted);font-size:.86rem}.msg.error{color:var(--danger);font-weight:600}.center{text-align:center;margin:16px}.nav{display:flex;justify-content:center;gap:5px;padding:7px;position:fixed;z-index:5;bottom:max(12px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--strong);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);backdrop-filter:blur(22px)}.nav button{border:0;background:transparent;color:var(--muted);border-radius:15px;min-height:48px;padding:8px 13px}.nav button.active{color:var(--accent);background:#7165f01a}.view.hidden{display:none!important}.panel{padding:18px}.list{display:grid;gap:10px}.item{display:flex;justify-content:space-between;gap:10px;padding:13px;border:1px solid var(--line);border-radius:16px;background:var(--strong)}.itemmain{min-width:0;flex:1;cursor:pointer}.itemmain p{margin:3px 0;overflow-wrap:anywhere}.small{font-size:.8rem;color:var(--muted)}.setting{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0}.setting select{min-height:42px;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--strong)}#toast{position:fixed;z-index:10;left:50%;bottom:88px;transform:translateX(-50%);padding:11px 16px;border-radius:15px;background:var(--strong);border:1px solid var(--line);box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.2s}#toast.show{opacity:1}@media(min-width:760px){.app{padding-top:38px}.grid{grid-template-columns:1fr 1fr}.card{min-height:340px}.swap{top:50%}.nav{position:static;transform:none;width:max-content;margin:24px auto 0}#toast{bottom:28px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand"><div class="logo">L</div><div><h1>Lisan Translate</h1><p>Private, fast, offline-first translation</p></div></div><div class="status"><span id="dot" class="dot"></span><span id="status">Online</span></div></header>
+
+<section id="translate" class="view">
+<div class="grid">
+<article class="glass card"><div class="langrow"><label class="select">From <select id="from"></select></label><button class="btn" id="auto">Auto</button></div><textarea id="input" maxlength="5000" placeholder="Enter text to translate..."></textarea><div class="foot"><span class="small" id="count">0 / 5000</span><div class="actions"><button class="btn icon" id="mic" title="Voice input">🎙</button><button class="btn icon" id="clear">×</button></div></div></article>
+<button class="swap" id="swap" title="Swap languages">⇅</button>
+<article class="glass card"><div class="langrow"><label class="select">To <select id="to"></select></label></div><div id="output" class="output empty">Translation appears here.</div><div class="foot"><span class="small" id="origin">Ready</span><div class="actions"><button class="btn icon" id="listen">🔊</button><button class="btn icon" id="copy">⧉</button><button class="btn icon" id="share">↗</button><button class="btn icon" id="fav">☆</button></div></div></article>
+</div>
+<div class="center"><button class="btn primary" id="translateBtn">Translate</button></div><div class="msg" id="msg"></div>
+</section>
+
+<section id="history" class="view hidden"><div class="glass panel"><div class="foot"><h2>History</h2><button class="btn" id="clearHistory">Clear all</button></div><div id="historyList" class="list"></div></div></section>
+<section id="favorites" class="view hidden"><div class="glass panel"><h2>Favorites</h2><input id="favSearch" class="select" style="width:100%" placeholder="Search saved phrases"><div id="favList" class="list" style="margin-top:12px"></div></div></section>
+<section id="settings" class="view hidden"><div class="glass panel"><h2>Settings</h2><div class="setting"><span>Theme</span><select id="theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div><div class="setting"><span>Font size</span><select id="font"><option value="15">Small</option><option value="16">Default</option><option value="18">Large</option><option value="20">Extra large</option></select></div><div class="setting"><span>Pending offline translations</span><button class="btn" id="queue">0</button></div><div class="setting"><span>Translation cache</span><button class="btn" id="clearCache">Clear</button></div><p class="hint">This version includes a built-in offline phrasebook and local IndexedDB cache. Arbitrary new translations require a configured /api/translate server endpoint when online.</p></div></section>
+</div>
+<nav class="nav"><button class="active" data-view="translate">Translate</button><button data-view="history">History</button><button data-view="favorites">Favorites</button><button data-view="settings">Settings</button></nav>
+<div id="toast"></div>
+
+<script>
+"use strict";
+const LANG=[
+["en","English"],["am","Amharic"],["ti","Tigrigna / Tigrinya"],["om","Afaan Oromo"],["aa","Afar"],["so","Somali"],["es","Spanish"],["ar","Arabic"],["fr","French"],["de","German"],["zh","Mandarin Chinese"]];
+const PHRASES={
+"hello":{"en":"Hello","am":"ሰላም","ti":"ሰላም","om":"Akkam","aa":"Salaam","so":"Salaan","es":"Hola","ar":"مرحبا","fr":"Bonjour","de":"Hallo","zh":"你好"},
+"good morning":{"en":"Good morning","am":"እንደምን አደርክ","ti":"ከመይ ሓዲርኩም","om":"Akkam bulte","aa":"Subax wanaagsan","so":"Subax wanaagsan","es":"Buenos días","ar":"صباح الخير","fr":"Bonjour","de":"Guten Morgen","zh":"早上好"},
+"thank you":{"en":"Thank you","am":"አመሰግናለሁ","ti":"የቐንየለይ","om":"Galatoomi","aa":"Mahadsanid","so":"Mahadsanid","es":"Gracias","ar":"شكرا","fr":"Merci","de":"Danke","zh":"谢谢"},
+"yes":{"en":"Yes","am":"አዎ","ti":"እወ","om":"Eeyyee","aa":"Haa","so":"Haa","es":"Sí","ar":"نعم","fr":"Oui","de":"Ja","zh":"是"},
+"no":{"en":"No","am":"አይ","ti":"ኣይፋል","om":"Lakki","aa":"Maya","so":"Maya","es":"No","ar":"لا","fr":"Non","de":"Nein","zh":"不"},
+"please":{"en":"Please","am":"እባክህ","ti":"በጃኹም","om":"Maaloo","aa":"Fadlan","so":"Fadlan","es":"Por favor","ar":"من فضلك","fr":"S'il vous plaît","de":"Bitte","zh":"请"},
+"goodbye":{"en":"Goodbye","am":"ደህና ሁን","ti":"ደሓን ኩኑ","om":"Nagaatti","aa":"Nabadgelyo","so":"Nabadgelyo","es":"Adiós","ar":"وداعا","fr":"Au revoir","de":"Auf Wiedersehen","zh":"再见"},
+"help":{"en":"Help","am":"እርዳታ","ti":"ሓገዝ","om":"Gargaarsa","aa":"Gargaara","so":"Caawimaad","es":"Ayuda","ar":"مساعدة","fr":"À l'aide","de":"Hilfe","zh":"帮助"},
+"water":{"en":"Water","am":"ውሃ","ti":"ማይ","om":"Bishaan","aa":"Biyo","so":"Biyo","es":"Agua","ar":"ماء","fr":"Eau","de":"Wasser","zh":"水"},
+"where is the bathroom":{"en":"Where is the bathroom?","am":"መጸዳጃ ቤቱ የት ነው?","ti":"መሕጸቢ ቤት ኣበይ ኣሎ?","om":"Mana fincaanii eessa jira?","aa":"Suuligu xaggee jira?","so":"Musqushu xaggee tahay?","es":"¿Dónde está el baño?","ar":"أين الحمام؟","fr":"Où sont les toilettes ?","de":"Wo ist die Toilette?","zh":"洗手间在哪里？"},
+"how much":{"en":"How much?","am":"ስንት ነው?","ti":"ክንደይ እዩ?","om":"Hanga meeqa?","aa":"Intee?","so":"Immisa?","es":"¿Cuánto cuesta?","ar":"كم السعر؟","fr":"Combien ?","de":"Wie viel?","zh":"多少钱？"},
+"i need help":{"en":"I need help","am":"እርዳታ እፈልጋለሁ","ti":"ሓገዝ የድልየኒ","om":"Gargaarsa nan barbaada","aa":"Gargaara baahih","so":"Waxaan u baahanahay caawimaad","es":"Necesito ayuda","ar":"أحتاج إلى مساعدة","fr":"J'ai besoin d'aide","de":"Ich brauche Hilfe","zh":"我需要帮助"}
+};
+const $=id=>document.getElementById(id), state={from:"auto",translated:"",timer:null,db:null};
+function toast(t){$("toast").textContent=t;$("toast").classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>$("toast").classList.remove("show"),2100)}
+function msg(t,e=false){$("msg").textContent=t;$("msg").className="msg"+(e?" error":"")}
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16)}
+function dbOpen(){return new Promise((res,rej)=>{let r=indexedDB.open("lisan-v2",1);r.onupgradeneeded=()=>{for(let n of["cache","history","favorites","queue"])if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n,{keyPath:"id"})};r.onsuccess=()=>{state.db=r.result;res()};r.onerror=()=>rej(r.error)})}
+function all(n){return new Promise((res,rej)=>{let r=state.db.transaction(n).objectStore(n).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error)})}
+function put(n,v){return new Promise((res,rej)=>{let r=state.db.transaction(n,"readwrite").objectStore(n).put(v);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+function get(n,id){return new Promise((res,rej)=>{let r=state.db.transaction(n).objectStore(n).get(id);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+function del(n,id){return new Promise((res,rej)=>{let r=state.db.transaction(n,"readwrite").objectStore(n).delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+function clear(n){return new Promise((res,rej)=>{let r=state.db.transaction(n,"readwrite").objectStore(n).clear();r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+function names(){for(let id of["from","to"]){$(id).innerHTML=LANG.map(x=>`<option value="${x[0]}">${x[1]} (${x[0]})</option>`).join("")}$("from").value="en";$("to").value="am"}
+function normalize(t){return t.trim().toLowerCase().replace(/\s+/g," ")}
+function phraseTranslate(text,from,to){let q=normalize(text);for(let key in PHRASES){let p=PHRASES[key];for(let lang of Object.keys(p)){if(normalize(p[lang])===q&&p[to])return p[to]}}return null}
+function render(text,origin="Ready"){state.translated=text||"";$("output").textContent=text||"Translation appears here.";$("output").classList.toggle("empty",!text);$("origin").textContent=origin}
+function updateStatus(){let on=navigator.onLine;$("status").textContent=on?"Online":"Offline";$("dot").classList.toggle("off",!on)}
+async function translate(){let text=$("input").value.trim(),from=state.from==="auto"?"auto":$("from").value,to=$("to").value;if(!text){msg("Enter text to translate.");return}if(from!=="auto"&&from===to){msg("Choose different languages.",true);return}
+let key=hash(`${from}:${to}:${normalize(text)}`),c=await get("cache",key).catch(()=>null);if(c){render(c.translation,"Cached");saveHistory(from,to,text,c.translation);return}
+let offline=!navigator.onLine;if(offline){let p=phraseTranslate(text,from,to);if(p){render(p,"Offline phrasebook");saveHistory(from,to,text,p);toast("Offline phrasebook");return}await put("queue",{id:key,from,to,text,createdAt:Date.now()});render("","Offline");msg("Offline. This text is queued and will translate when you are online.",true);refreshQueue();return}
+$("translateBtn").disabled=true;$("translateBtn").textContent="Translating…";msg("");
+try{let r=await fetch("/api/translate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({source:from,target:to,text})});let d=await r.json().catch(()=>null);if(!r.ok||typeof d?.translation!=="string")throw Error(d?.error||"Translation service unavailable.");let result=d.translation.trim();render(result,"Online");await put("cache",{id:key,from,to,text,translation:result,createdAt:Date.now()});await saveHistory(d.sourceLanguage||from,to,text,result);toast("Translated")}
+catch(e){let p=phraseTranslate(text,from,to);if(p){render(p,"Offline phrasebook");await saveHistory(from,to,text,p);toast("Phrasebook result")}else{await put("queue",{id:key,from,to,text,createdAt:Date.now()});msg(e.message||"Translation failed. Request queued for retry.",true)}}
+finally{$("translateBtn").disabled=false;$("translateBtn").textContent="Translate";refreshQueue()}}
+async function saveHistory(from,to,text,translation){await put("history",{id:Date.now()+"-"+Math.random(),from,to,text,translation,createdAt:Date.now()})}
+async function refreshQueue(){$("queue").textContent=`${(await all("queue").catch(()=>[])).length} pending`}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function lname(c){return LANG.find(x=>x[0]===c)?.[1]||c}
+async function renderHistory(){let a=(await all("history")).sort((x,y)=>y.createdAt-x.createdAt);$("historyList").innerHTML=a.length?a.map(x=>`<div class="item"><div class="itemmain" data-h="${esc(x.id)}"><span class="small">${esc(lname(x.from))} → ${esc(lname(x.to))}</span><p>${esc(x.text)}</p><p>${esc(x.translation)}</p></div><button class="btn icon" data-dh="${esc(x.id)}">×</button></div>`).join(""):`<p class="hint">No translations yet.</p>`}
+async function renderFav(){let q=$("favSearch").value.toLowerCase(),a=(await all("favorites")).filter(x=>(x.text+" "+x.translation).toLowerCase().includes(q));$("favList").innerHTML=a.length?a.map(x=>`<div class="item"><div class="itemmain" data-f="${esc(x.id)}"><span class="small">${esc(lname(x.from))} → ${esc(lname(x.to))}</span><p>${esc(x.text)}</p><p>${esc(x.translation)}</p></div><button class="btn icon" data-df="${esc(x.id)}">×</button></div>`).join(""):`<p class="hint">No favorites yet.</p>`}
+function nav(v){document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));$(v).classList.remove("hidden");document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===v));if(v==="history")renderHistory();if(v==="favorites")renderFav()}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>nav(b.dataset.view));
+$("input").oninput=()=>{$("count").textContent=`${$("input").value.length} / 5000`;clearTimeout(state.timer);if($("input").value.trim())state.timer=setTimeout(translate,500)}
+$("translateBtn").onclick=translate;$("from").onchange=()=>{state.from=$("from").value};$("to").onchange=()=>{if($("input").value.trim())translate()};
+$("auto").onclick=()=>{state.from="auto";toast("Automatic detection enabled")};
+$("swap").onclick=()=>{if(state.from==="auto"){msg("Choose a source language before swapping.",true);return}let a=$("from").value;$("from").value=$("to").value;$("to").value=a;state.from=$("from").value;if(state.translated){$("input").value=state.translated;$("count").textContent=`${$("input").value.length} / 5000`;render("")}translate()};
+$("clear").onclick=()=>{$("input").value="";$("count").textContent="0 / 5000";render("");msg("")};
+$("copy").onclick=async()=>{if(!state.translated)return msg("Nothing to copy.");await navigator.clipboard.writeText(state.translated);toast("Copied")};
+$("share").onclick=async()=>{if(!state.translated)return msg("Nothing to share.");let t=$("input").value+"\n\n"+state.translated;if(navigator.share)await navigator.share({title:"Lisan Translate",text:t});else{await navigator.clipboard.writeText(t);toast("Copied")}};
+$("fav").onclick=async()=>{if(!state.translated)return msg("Translate something first.");let id=hash(`${state.from}:${$("to").value}:${normalize($("input").value)}`);await put("favorites",{id,from:state.from,to:$("to").value,text:$("input").value,translation:state.translated,createdAt:Date.now()});$("fav").textContent="★";toast("Saved to favorites")};
+$("listen").onclick=()=>{if(!state.translated)return msg("Nothing to listen to.");if(!speechSynthesis)return msg("Text-to-speech is unavailable.",true);let u=new SpeechSynthesisUtterance(state.translated);u.lang=$("to").value;speechSynthesis.speak(u)};
+$("mic").onclick=()=>{let R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return msg("Voice input is not supported by this browser.",true);let r=new R();r.lang=$("from").value;r.onresult=e=>{$("input").value=e.results[0][0].transcript;$("input").dispatchEvent(new Event("input"))};r.start()};
+$("historyList").onclick=async e=>{let d=e.target.closest("[data-dh]"),o=e.target.closest("[data-h]");if(d){await del("history",d.dataset.dh);renderHistory()}else if(o){let x=await get("history",o.dataset.h);$("from").value=x.from==="auto"?"en":x.from;$("to").value=x.to;state.from=x.from;$("input").value=x.text;$("count").textContent=`${x.text.length} / 5000`;render(x.translation,"History");nav("translate")}};
+$("favList").onclick=async e=>{let d=e.target.closest("[data-df]"),o=e.target.closest("[data-f]");if(d){await del("favorites",d.dataset.df);renderFav()}else if(o){let x=await get("favorites",o.dataset.f);$("from").value=x.from;$("to").value=x.to;state.from=x.from;$("input").value=x.text;$("count").textContent=`${x.text.length} / 5000`;render(x.translation,"Favorite");nav("translate")}};
+$("clearHistory").onclick=async()=>{await clear("history");renderHistory();toast("History cleared")};$("favSearch").oninput=renderFav;$("clearCache").onclick=async()=>{await clear("cache");toast("Cache cleared")};
+$("queue").onclick=async()=>{let q=await all("queue");if(q.length&&confirm(`Clear ${q.length} queued requests?`)){await clear("queue");refreshQueue()}};
+$("theme").onchange=()=>applyTheme();$("font").onchange=e=>{document.documentElement.style.fontSize=e.target.value+"px";localStorage.font=e.target.value};
+function applyTheme(){let x=$("theme").value,d=x==="dark"||(x==="system"&&matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.classList.toggle("dark",d);localStorage.theme=x}
+async function processQueue(){if(!navigator.onLine)return;for(let x of await all("queue")){try{let r=await fetch("/api/translate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({source:x.from,target:x.to,text:x.text})});let d=await r.json();if(!r.ok||!d.translation)break;let key=x.id;await put("cache",{id:key,from:x.from,to:x.to,text:x.text,translation:d.translation,createdAt:Date.now()});await saveHistory(d.sourceLanguage||x.from,x.to,x.text,d.translation);await del("queue",x.id)}catch{break}}refreshQueue()}
+window.ononline=()=>{updateStatus();toast("Back online");processQueue()};window.onoffline=updateStatus;
+(async()=>{names();await dbOpen();$("theme").value=localStorage.theme||"system";$("font").value=localStorage.font||"16";applyTheme();document.documentElement.style.fontSize=$("font").value+"px";updateStatus();refreshQueue()})()
+</script>
+</body>
+</html>
